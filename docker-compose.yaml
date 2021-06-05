@@ -1,0 +1,32 @@
+
+version: '3'
+services:
+  
+  web:
+    build: ./backend/
+    network_mode: "host"
+    volumes:
+      - "./backend/:/app"
+    depends_on:
+      - database
+      
+  database:
+    image: postgres
+    environment: 
+      POSTGRES_DB: USERS
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+  
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./frontend:/app"
